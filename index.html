@@ -72,10 +72,12 @@
 
         #timer-container {
             position: relative;
-            width: 30vw;
-            height: 30vw;
+            width: 80vw;
+            height: 80vw;
             max-width: 300px;
             max-height: 300px;
+            min-width: 150px;
+            min-height: 150px;
             margin-bottom: 2vh;
             display: flex;
             justify-content: center;
@@ -195,6 +197,29 @@
             gap: 1em;
             flex-wrap: wrap;
             justify-content: center;
+        }
+
+        /* Responsive adjustments for small screens */
+        @media (max-width: 400px) {
+            #timer-text {
+                width: 70%;
+                max-width: 120px;
+            }
+
+            #timer-text span {
+                font-size: clamp(1.8rem, 10vw, 3rem);
+            }
+        }
+
+        @media (max-width: 320px) {
+            #timer-text {
+                width: 80%;
+                max-width: 100px;
+            }
+
+            #timer-text span {
+                font-size: clamp(1.5rem, 12vw, 2.5rem);
+            }
         }
     </style>
 </head>
