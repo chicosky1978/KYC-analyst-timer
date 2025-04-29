@@ -1,19 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Countdown Timer with Blue & Yellow Ring</title>
     <style>
-        html,
-        body {
-            height: 100%;
-            width: 100%;
-            margin: 0;
-            padding: 0;
-        }
-
+        /* ... (your CSS styles remain unchanged) ... */
+        html, body { height: 100%; width: 100%; margin: 0; padding: 0; }
         body {
             background-color: #000;
             display: flex;
@@ -29,46 +22,10 @@
             box-sizing: border-box;
             min-height: 100vh;
         }
-
-        #timer-inputs {
-            display: flex;
-            gap: 0.5em;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 1em;
-            flex-wrap: wrap;
-        }
-
-        #timer-inputs input {
-            font-size: 1.2em;
-            text-align: center;
-            border: 1px solid blue;
-            background: rgba(0, 0, 0, 0.3);
-            color: yellow;
-            border-radius: 0.3em;
-            outline: none;
-            width: 3em;
-            padding: 0.2em 0;
-            user-select: text;
-        }
-
-        #timer-inputs button {
-            font-size: 1em;
-            padding: 0.3em 1em;
-            border: 1px solid blue;
-            background: rgba(0, 0, 0, 0.3);
-            color: yellow;
-            border-radius: 0.3em;
-            cursor: pointer;
-            transition: background 0.2s;
-            user-select: none;
-        }
-
-        #timer-inputs button:hover {
-            background: yellow;
-            color: #000;
-        }
-
+        #timer-inputs { display: flex; gap: 0.5em; justify-content: center; align-items: center; margin-bottom: 1em; flex-wrap: wrap; }
+        #timer-inputs input { font-size: 1.2em; text-align: center; border: 1px solid blue; background: rgba(0,0,0,0.3); color: yellow; border-radius: 0.3em; outline: none; width: 3em; padding: 0.2em 0; user-select: text; }
+        #timer-inputs button { font-size: 1em; padding: 0.3em 1em; border: 1px solid blue; background: rgba(0,0,0,0.3); color: yellow; border-radius: 0.3em; cursor: pointer; transition: background 0.2s; user-select: none; }
+        #timer-inputs button:hover { background: yellow; color: #000; }
         #timer-container {
             position: relative;
             width: 80vw;
@@ -82,85 +39,23 @@
             justify-content: center;
             align-items: center;
         }
-
-        svg {
-            transform: rotate(-90deg);
-            width: 100%;
-            height: 100%;
-            position: relative;
-        }
-
-        circle {
-            fill: none;
-            stroke-width: 8;
-            stroke-linecap: round;
-            transition: stroke-dashoffset 0.3s linear;
-        }
-
-        #timer-bg {
-            stroke: #007bff;
-        }
-
-        #timer-elapsed {
-            stroke: #ffeb3b;
-            stroke-dasharray: 282.6;
-            stroke-dashoffset: 282.6;
-            transition: stroke 0.3s ease;
-        }
-
+        svg { transform: rotate(-90deg); width: 100%; height: 100%; position: relative; }
+        circle { fill: none; stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset 0.3s linear; }
+        #timer-bg { stroke: #007bff; }
+        #timer-elapsed { stroke: #ffeb3b; stroke-dasharray: 282.6; stroke-dashoffset: 282.6; transition: stroke 0.3s ease; }
         #timer-text {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: yellow;
-            font-weight: bold;
-            user-select: none;
-            pointer-events: none;
-            line-height: 1;
-            white-space: nowrap;
-            text-align: center;
-            width: 45%;
-            max-width: 160px;
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            color: yellow; font-weight: bold; user-select: none; pointer-events: none; line-height: 1; white-space: nowrap; text-align: center;
+            width: 45%; max-width: 160px;
         }
-
-        #timer-text span {
-            font-size: clamp(1.8rem, 5vw, 3.5rem);
-            line-height: 1.1;
-            margin: 0;
-            padding: 0;
-        }
-
-        #timer-text span+span {
-            margin-top: 0.05em;
-        }
-
-        .alert #timer-elapsed {
-            stroke: red !important;
-            filter: drop-shadow(0 0 8px red);
-            animation: blink 1s step-start infinite;
-        }
-
-        .alert #timer-text {
-            color: red !important;
-            animation: blink 1s step-start infinite;
-        }
-
-        @keyframes blink {
-            50% {
-                opacity: 0.7;
-            }
-        }
-
-        #controls {
-            display: flex;
-            gap: 1vw;
-        }
-
+        #timer-text span { font-size: clamp(1.8rem, 5vw, 3.5rem); line-height: 1.1; margin: 0; padding: 0; }
+        #timer-text span+span { margin-top: 0.05em; }
+        .alert #timer-elapsed { stroke: red !important; filter: drop-shadow(0 0 8px red); animation: blink 1s step-start infinite; }
+        .alert #timer-text { color: red !important; animation: blink 1s step-start infinite; }
+        @keyframes blink { 50% { opacity: 0.7; } }
+        #controls { display: flex; gap: 1vw; }
         button {
             font-family: 'Courier New', Courier, monospace;
             font-size: clamp(1.2rem, 3vw, 1.8rem);
@@ -173,51 +68,19 @@
             transition: background-color 0.3s, color 0.3s;
             user-select: none;
         }
-
-        button:hover:not(:disabled) {
-            background-color: blue;
-            color: #000;
-        }
-
-        button:disabled {
-            opacity: 0.2;
-            cursor: default;
-            background-color: rgba(0, 0, 0, 0.1);
-            color: yellow;
-        }
-
-        #preset-buttons {
-            margin-top: 1em;
-            display: flex;
-            gap: 1em;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
+        button:hover:not(:disabled) { background-color: blue; color: #000; }
+        button:disabled { opacity: 0.2; cursor: default; background-color: rgba(0,0,0,0.1); color: yellow; }
+        #preset-buttons { margin-top: 1em; display: flex; gap: 1em; flex-wrap: wrap; justify-content: center; }
         @media (max-width: 480px) {
-            #timer-text {
-                width: 60%;
-                max-width: 140px;
-            }
-
-            #timer-text span {
-                font-size: clamp(1.4rem, 6vw, 2.8rem);
-            }
+            #timer-text { width: 60%; max-width: 140px; }
+            #timer-text span { font-size: clamp(1.4rem, 6vw, 2.8rem); }
         }
-
         @media (max-width: 360px) {
-            #timer-text {
-                width: 70%;
-                max-width: 120px;
-            }
-
-            #timer-text span {
-                font-size: clamp(1.2rem, 7vw, 2.2rem);
-            }
+            #timer-text { width: 70%; max-width: 120px; }
+            #timer-text span { font-size: clamp(1.2rem, 7vw, 2.2rem); }
         }
     </style>
 </head>
-
 <body>
     <div id="timer-inputs" style="text-align: center;">
         <input type="number" id="input-hours" min="0" max="99" placeholder="HH" aria-label="Hours" />
@@ -225,7 +88,6 @@
         <input type="number" id="input-seconds" min="0" max="59" placeholder="SS" aria-label="Seconds" />
         <button id="set-timer-btn" aria-label="Set Timer">Set Timer</button>
     </div>
-
     <div id="preset-buttons">
         <button class="preset-btn" data-time="2280000">EDD Review (38 min)</button>
         <button class="preset-btn" data-time="460800">GC Consumer Review (7.68 min)</button>
@@ -235,7 +97,6 @@
         <button class="preset-btn" data-time="460800">KYC Appeals (7.68 min)</button>
         <button class="preset-btn" data-time="2144400">GC Refresh Backlog (35.74 min)</button>
     </div>
-
     <div id="timer-container">
         <svg viewBox="0 0 100 100" aria-hidden="true">
             <circle id="timer-bg" cx="50" cy="50" r="45" />
@@ -247,12 +108,14 @@
             <span id="seconds">00</span>
         </div>
     </div>
-
     <div id="controls">
         <button id="startBtn">Start</button>
         <button id="pauseBtn" disabled>Pause</button>
         <button id="resetBtn" disabled>Reset</button>
     </div>
+
+    <!-- Alert sound -->
+    <audio id="alert-sound" src="alert.wav" preload="auto"></audio>
 
     <script>
         // Set background image explicitly on page load
@@ -266,6 +129,9 @@
         const startBtn = document.getElementById('startBtn');
         const pauseBtn = document.getElementById('pauseBtn');
         const resetBtn = document.getElementById('resetBtn');
+
+        const alertSound = document.getElementById('alert-sound');
+        let alertPlayed = false;
 
         const hoursElem = document.getElementById('hours');
         const minutesElem = document.getElementById('minutes');
@@ -298,20 +164,15 @@
             if (!timerStartTimestamp) return;
 
             const now = Date.now();
-            // Calculate elapsed time excluding paused durations
             let elapsed = now - timerStartTimestamp - pausedDuration;
             const remaining = TOTAL_TIME_MS - elapsed;
 
-            // totalSeconds can be negative now to show overtime
             const totalSeconds = Math.floor(remaining / 1000);
-
-            // Calculate absolute time for display
             const absSeconds = Math.abs(totalSeconds);
             const hours = Math.floor(absSeconds / 3600);
             const minutes = Math.floor((absSeconds % 3600) / 60);
             const seconds = absSeconds % 60;
 
-            // Display with minus sign if negative
             if (totalSeconds < 0) {
                 hoursElem.textContent = '-' + pad(hours);
                 minutesElem.textContent = pad(minutes);
@@ -322,17 +183,24 @@
                 secondsElem.textContent = pad(seconds);
             }
 
-            // Progress ring: clamp between 0 and 1 for normal time, 0 when overtime
             let progress = remaining / TOTAL_TIME_MS;
             if (progress < 0) progress = 0;
-
             timerElapsed.style.strokeDashoffset = CIRCUMFERENCE * progress;
 
-            // Alert state: active if within alert threshold or overtime
             if (remaining <= ALERT_THRESHOLD_MS) {
                 timerContainer.classList.add('alert');
             } else {
                 timerContainer.classList.remove('alert');
+            }
+
+            // Play alert sound once when time runs out
+            if (remaining <= 0) {
+                if (!alertPlayed) {
+                    alertSound.play().catch(e => { /* ignore play errors */ });
+                    alertPlayed = true;
+                }
+            } else {
+                alertPlayed = false;
             }
 
             animationFrameId = requestAnimationFrame(updateTimer);
@@ -342,11 +210,9 @@
             if (state === 'running') return;
 
             if (state === 'paused' && pauseStartTimestamp) {
-                // Resume from pause
                 pausedDuration += Date.now() - pauseStartTimestamp;
                 pauseStartTimestamp = null;
             } else if (state === 'stopped') {
-                // New start
                 timerStartTimestamp = Date.now();
                 pausedDuration = 0;
             }
@@ -359,7 +225,6 @@
 
         function pauseTimer() {
             if (state !== 'running') return;
-
             if (animationFrameId) {
                 cancelAnimationFrame(animationFrameId);
                 animationFrameId = null;
@@ -411,7 +276,6 @@
             }
         }
 
-        // Save timer state to localStorage
         function saveState() {
             const stateObj = {
                 TOTAL_TIME_MS,
@@ -423,7 +287,6 @@
             localStorage.setItem('timerState', JSON.stringify(stateObj));
         }
 
-        // Load timer state from localStorage
         function loadState() {
             const stateStr = localStorage.getItem('timerState');
             if (!stateStr) return;
@@ -436,7 +299,6 @@
                 pauseStartTimestamp = stateObj.pauseStartTimestamp || null;
                 state = stateObj.state || 'stopped';
 
-                // Update input fields to reflect TOTAL_TIME_MS
                 const totalSeconds = Math.floor(TOTAL_TIME_MS / 1000);
                 const h = Math.floor(totalSeconds / 3600);
                 const m = Math.floor((totalSeconds % 3600) / 60);
@@ -449,7 +311,7 @@
                 if (state === 'running') {
                     startTimer();
                 } else if (state === 'paused') {
-                    updateTimer(); // Show current time
+                    updateTimer();
                     updateButtons();
                 } else {
                     resetTimer();
@@ -487,9 +349,7 @@
             resetTimer();
         });
 
-        // Preset buttons functionality
         const presetButtons = document.querySelectorAll('.preset-btn');
-
         presetButtons.forEach(button => {
             button.addEventListener('click', () => {
                 const presetTime = parseInt(button.getAttribute('data-time'), 10);
@@ -497,7 +357,6 @@
                     TOTAL_TIME_MS = presetTime;
                     resetTimer();
 
-                    // Update input fields to reflect preset time
                     const totalSeconds = presetTime / 1000;
                     const h = Math.floor(totalSeconds / 3600);
                     const m = Math.floor((totalSeconds % 3600) / 60);
@@ -512,7 +371,6 @@
             });
         });
 
-        // Load saved state on page load
         window.addEventListener('load', () => {
             loadState();
         });
@@ -526,5 +384,4 @@
         });
     </script>
 </body>
-
 </html>
