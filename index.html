@@ -28,7 +28,6 @@
             padding: 1em;
             box-sizing: border-box;
             min-height: 100vh;
-            /* background image will be set by JS */
         }
 
         #timer-inputs {
@@ -98,17 +97,14 @@
             transition: stroke-dashoffset 0.3s linear;
         }
 
-        /* Blue full circle (background) */
         #timer-bg {
             stroke: #007bff;
         }
 
-        /* Yellow elapsed time circle (top) */
         #timer-elapsed {
             stroke: #ffeb3b;
             stroke-dasharray: 282.6;
             stroke-dashoffset: 282.6;
-            /* start fully hidden */
             transition: stroke 0.3s ease;
         }
 
@@ -129,11 +125,11 @@
             white-space: nowrap;
             text-align: center;
             width: 45%;
-            max-width: 140px;
+            max-width: 160px;
         }
 
         #timer-text span {
-            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-size: clamp(1.8rem, 5vw, 3.5rem);
             line-height: 1.1;
             margin: 0;
             padding: 0;
@@ -190,7 +186,6 @@
             color: yellow;
         }
 
-        /* Preset buttons container */
         #preset-buttons {
             margin-top: 1em;
             display: flex;
@@ -199,26 +194,25 @@
             justify-content: center;
         }
 
-        /* Responsive adjustments for small screens */
-        @media (max-width: 400px) {
+        @media (max-width: 480px) {
+            #timer-text {
+                width: 60%;
+                max-width: 140px;
+            }
+
+            #timer-text span {
+                font-size: clamp(1.4rem, 6vw, 2.8rem);
+            }
+        }
+
+        @media (max-width: 360px) {
             #timer-text {
                 width: 70%;
                 max-width: 120px;
             }
 
             #timer-text span {
-                font-size: clamp(1.8rem, 10vw, 3rem);
-            }
-        }
-
-        @media (max-width: 320px) {
-            #timer-text {
-                width: 80%;
-                max-width: 100px;
-            }
-
-            #timer-text span {
-                font-size: clamp(1.5rem, 12vw, 2.5rem);
+                font-size: clamp(1.2rem, 7vw, 2.2rem);
             }
         }
     </style>
