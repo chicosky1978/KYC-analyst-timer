@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Timer KYC Analysts </title>
+    <title>Countdown Timer with Blue & Yellow Ring</title>
     <style>
         html,
         body {
@@ -15,9 +15,6 @@
         }
 
         body {
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
             background-color: #000;
             display: flex;
             flex-direction: column;
@@ -28,10 +25,10 @@
             user-select: none;
             cursor: default;
             overflow: hidden;
-            transition: background-image 1s ease-in-out;
             padding: 1em;
             box-sizing: border-box;
             min-height: 100vh;
+            /* background image will be set by JS */
         }
 
         #timer-inputs {
@@ -239,6 +236,12 @@
     </div>
 
     <script>
+        // Set background image explicitly on page load
+        document.body.style.backgroundImage = "url('time.jpg')";
+        document.body.style.backgroundSize = "cover";
+        document.body.style.backgroundPosition = "center";
+        document.body.style.backgroundRepeat = "no-repeat";
+
         const timerElapsed = document.getElementById('timer-elapsed');
         const timerContainer = document.getElementById('timer-container');
         const startBtn = document.getElementById('startBtn');
@@ -262,29 +265,22 @@
         timerElapsed.style.strokeDasharray = CIRCUMFERENCE;
         timerElapsed.style.strokeDashoffset = CIRCUMFERENCE; // start fully hidden
 
-        let startTime = null;
-        let pausedTime = 0;
+        let timerStartTimestamp = null; // real start time (Date.now())
+        let pausedDuration = 0; // total paused time in ms
+        let pauseStartTimestamp = null; // when pause started
         let animationFrameId = null;
         let state = 'stopped';
-
-        // Background image
-        const images = ['time.jpg']; // Single background image
-
-        function changeBackgroundImage() {
-            const randomIndex = Math.floor(Math.random() * images.length);
-            document.body.style.backgroundImage = `url('${images[randomIndex]}')`;
-        }
-
-        setInterval(changeBackgroundImage, 20000);
-        changeBackgroundImage();
 
         function pad(num) {
             return num.toString().padStart(2, '0');
         }
 
-        function updateTimer(timestamp) {
-            if (!startTime) startTime = timestamp;
-            const elapsed = timestamp - startTime + pausedTime;
+        function updateTimer() {
+            if (!timerStartTimestamp) return;
+
+            const now = Date.now();
+            // Calculate elapsed time excluding paused durations
+            let elapsed = now - timerStartTimestamp - pausedDuration;
             const remaining = TOTAL_TIME_MS - elapsed;
 
             // totalSeconds can be negative now to show overtime
@@ -320,35 +316,49 @@
                 timerContainer.classList.remove('alert');
             }
 
-            // Continue animation even if time is negative (overtime)
             animationFrameId = requestAnimationFrame(updateTimer);
         }
 
         function startTimer() {
             if (state === 'running') return;
-            if (animationFrameId) cancelAnimationFrame(animationFrameId);
-            startTime = null;
+
+            if (state === 'paused' && pauseStartTimestamp) {
+                // Resume from pause
+                pausedDuration += Date.now() - pauseStartTimestamp;
+                pauseStartTimestamp = null;
+            } else if (state === 'stopped') {
+                // New start
+                timerStartTimestamp = Date.now();
+                pausedDuration = 0;
+            }
+
             animationFrameId = requestAnimationFrame(updateTimer);
             state = 'running';
             updateButtons();
+            saveState();
         }
 
         function pauseTimer() {
             if (state !== 'running') return;
+
             if (animationFrameId) {
                 cancelAnimationFrame(animationFrameId);
                 animationFrameId = null;
-                pausedTime += performance.now() - startTime;
-                state = 'paused';
-                updateButtons();
             }
+            pauseStartTimestamp = Date.now();
+            state = 'paused';
+            updateButtons();
+            saveState();
         }
 
         function resetTimer() {
-            if (animationFrameId) cancelAnimationFrame(animationFrameId);
-            animationFrameId = null;
-            startTime = null;
-            pausedTime = 0;
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
+            timerStartTimestamp = null;
+            pausedDuration = 0;
+            pauseStartTimestamp = null;
             state = 'stopped';
 
             const totalSeconds = Math.floor(TOTAL_TIME_MS / 1000);
@@ -363,6 +373,7 @@
             timerElapsed.style.strokeDashoffset = CIRCUMFERENCE;
             timerContainer.classList.remove('alert');
             updateButtons();
+            saveState();
         }
 
         function updateButtons() {
@@ -381,6 +392,54 @@
             }
         }
 
+        // Save timer state to localStorage
+        function saveState() {
+            const stateObj = {
+                TOTAL_TIME_MS,
+                timerStartTimestamp,
+                pausedDuration,
+                pauseStartTimestamp,
+                state
+            };
+            localStorage.setItem('timerState', JSON.stringify(stateObj));
+        }
+
+        // Load timer state from localStorage
+        function loadState() {
+            const stateStr = localStorage.getItem('timerState');
+            if (!stateStr) return;
+
+            try {
+                const stateObj = JSON.parse(stateStr);
+                TOTAL_TIME_MS = stateObj.TOTAL_TIME_MS || TOTAL_TIME_MS;
+                timerStartTimestamp = stateObj.timerStartTimestamp || null;
+                pausedDuration = stateObj.pausedDuration || 0;
+                pauseStartTimestamp = stateObj.pauseStartTimestamp || null;
+                state = stateObj.state || 'stopped';
+
+                // Update input fields to reflect TOTAL_TIME_MS
+                const totalSeconds = Math.floor(TOTAL_TIME_MS / 1000);
+                const h = Math.floor(totalSeconds / 3600);
+                const m = Math.floor((totalSeconds % 3600) / 60);
+                const s = totalSeconds % 60;
+
+                inputHours.value = h > 0 ? h : '';
+                inputMinutes.value = m > 0 ? m : '';
+                inputSeconds.value = s > 0 ? s : '';
+
+                if (state === 'running') {
+                    startTimer();
+                } else if (state === 'paused') {
+                    updateTimer(); // Show current time
+                    updateButtons();
+                } else {
+                    resetTimer();
+                }
+            } catch (e) {
+                console.error('Failed to load timer state:', e);
+            }
+        }
+
         setTimerBtn.addEventListener('click', () => {
             const h = Math.max(0, Math.min(99, parseInt(inputHours.value) || 0));
             const m = Math.max(0, Math.min(59, parseInt(inputMinutes.value) || 0));
@@ -394,18 +453,11 @@
             }
 
             resetTimer();
+            saveState();
         });
 
         startBtn.addEventListener('click', () => {
-            if (state === 'paused') {
-                startTime = performance.now();
-                animationFrameId = requestAnimationFrame(updateTimer);
-                state = 'running';
-                updateButtons();
-            } else if (state === 'stopped') {
-                resetTimer();
-                startTimer();
-            }
+            startTimer();
         });
 
         pauseBtn.addEventListener('click', () => {
@@ -435,15 +487,16 @@
                     inputHours.value = h > 0 ? h : '';
                     inputMinutes.value = m > 0 ? m : '';
                     inputSeconds.value = s > 0 ? s : '';
+
+                    saveState();
                 }
             });
         });
 
-        // Initial background image and interval
-        changeBackgroundImage();
-        setInterval(changeBackgroundImage, 20000);
-
-        resetTimer();
+        // Load saved state on page load
+        window.addEventListener('load', () => {
+            loadState();
+        });
 
         window.addEventListener('beforeunload', function (e) {
             if (state !== 'stopped') {
