@@ -1,14 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Claudio's Timer for KYC analysts</title>
+    <title>Countdown Timer with Blue & Yellow Ring</title>
     <style>
-        /* ... (your CSS styles remain unchanged) ... */
-        html, body { height: 100%; width: 100%; margin: 0; padding: 0; }
+        html,
+        body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
             background-color: #000;
+            background-image: url('time.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -22,40 +33,144 @@
             box-sizing: border-box;
             min-height: 100vh;
         }
-        #timer-inputs { display: flex; gap: 0.5em; justify-content: center; align-items: center; margin-bottom: 1em; flex-wrap: wrap; }
-        #timer-inputs input { font-size: 1.2em; text-align: center; border: 1px solid blue; background: rgba(0,0,0,0.3); color: yellow; border-radius: 0.3em; outline: none; width: 3em; padding: 0.2em 0; user-select: text; }
-        #timer-inputs button { font-size: 1em; padding: 0.3em 1em; border: 1px solid blue; background: rgba(0,0,0,0.3); color: yellow; border-radius: 0.3em; cursor: pointer; transition: background 0.2s; user-select: none; }
-        #timer-inputs button:hover { background: yellow; color: #000; }
+
+        #timer-inputs {
+            display: flex;
+            gap: 0.5em;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 1em;
+            flex-wrap: wrap;
+        }
+
+        #timer-inputs input {
+            font-size: 1.2em;
+            text-align: center;
+            border: 1px solid blue;
+            background: rgba(0, 0, 0, 0.3);
+            color: yellow;
+            border-radius: 0.3em;
+            outline: none;
+            width: 3em;
+            padding: 0.2em 0;
+            user-select: text;
+        }
+
+        #timer-inputs button {
+            font-size: 1em;
+            padding: 0.3em 1em;
+            border: 1px solid blue;
+            background: rgba(0, 0, 0, 0.3);
+            color: yellow;
+            border-radius: 0.3em;
+            cursor: pointer;
+            transition: background 0.2s;
+            user-select: none;
+        }
+
+        #timer-inputs button:hover {
+            background: yellow;
+            color: #000;
+        }
+
         #timer-container {
             position: relative;
-            width: 80vw;
-            height: 80vw;
+            width: 30vw;
+            height: 30vw;
             max-width: 300px;
             max-height: 300px;
-            min-width: 150px;
-            min-height: 150px;
             margin-bottom: 2vh;
             display: flex;
             justify-content: center;
             align-items: center;
         }
-        svg { transform: rotate(-90deg); width: 100%; height: 100%; position: relative; }
-        circle { fill: none; stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset 0.3s linear; }
-        #timer-bg { stroke: #007bff; }
-        #timer-elapsed { stroke: #ffeb3b; stroke-dasharray: 282.6; stroke-dashoffset: 282.6; transition: stroke 0.3s ease; }
+
+        svg {
+            transform: rotate(-90deg);
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        circle {
+            fill: none;
+            stroke-width: 10;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.3s linear;
+        }
+
+        /* Modern blue background ring with subtle glow */
+        #timer-bg {
+            stroke: #1e3a8a;
+            filter: drop-shadow(0 0 4px #2563eb);
+            opacity: 0.3;
+        }
+
+        /* Gradient yellow elapsed ring with glow */
+        #timer-elapsed {
+            stroke: url(#timer-gradient);
+            stroke-dasharray: 282.6;
+            stroke-dashoffset: 282.6;
+            filter: drop-shadow(0 0 8px #facc15);
+            transition: stroke 0.3s ease;
+        }
+
+        /* Timer text styling - modern sans-serif, bold and sharp */
         #timer-text {
             position: absolute;
-            top: 50%; left: 50%; transform: translate(-50%, -50%);
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            color: yellow; font-weight: bold; user-select: none; pointer-events: none; line-height: 1; white-space: nowrap; text-align: center;
-            width: 45%; max-width: 160px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #facc15;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-weight: 700;
+            user-select: none;
+            pointer-events: none;
+            line-height: 1;
+            white-space: nowrap;
+            text-align: center;
+            width: 45%;
+            max-width: 140px;
         }
-        #timer-text span { font-size: clamp(1.8rem, 5vw, 3.5rem); line-height: 1.1; margin: 0; padding: 0; }
-        #timer-text span+span { margin-top: 0.05em; }
-        .alert #timer-elapsed { stroke: red !important; filter: drop-shadow(0 0 8px red); animation: blink 1s step-start infinite; }
-        .alert #timer-text { color: red !important; animation: blink 1s step-start infinite; }
-        @keyframes blink { 50% { opacity: 0.7; } }
-        #controls { display: flex; gap: 1vw; }
+
+        #timer-text span {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            line-height: 1.1;
+            margin: 0;
+            padding: 0;
+        }
+
+        #timer-text span + span {
+            margin-top: 0.05em;
+        }
+
+        /* Alert styles */
+        .alert #timer-elapsed {
+            stroke: #dc2626 !important;
+            filter: drop-shadow(0 0 8px #dc2626);
+            animation: blink 1s step-start infinite;
+        }
+
+        .alert #timer-text {
+            color: #dc2626 !important;
+            animation: blink 1s step-start infinite;
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        #controls {
+            display: flex;
+            gap: 1vw;
+        }
+
         button {
             font-family: 'Courier New', Courier, monospace;
             font-size: clamp(1.2rem, 3vw, 1.8rem);
@@ -68,19 +183,52 @@
             transition: background-color 0.3s, color 0.3s;
             user-select: none;
         }
-        button:hover:not(:disabled) { background-color: blue; color: #000; }
-        button:disabled { opacity: 0.2; cursor: default; background-color: rgba(0,0,0,0.1); color: yellow; }
-        #preset-buttons { margin-top: 1em; display: flex; gap: 1em; flex-wrap: wrap; justify-content: center; }
-        @media (max-width: 480px) {
-            #timer-text { width: 60%; max-width: 140px; }
-            #timer-text span { font-size: clamp(1.4rem, 6vw, 2.8rem); }
+
+        button:hover:not(:disabled) {
+            background-color: blue;
+            color: #000;
         }
+
+        button:disabled {
+            opacity: 0.2;
+            cursor: default;
+            background-color: rgba(0, 0, 0, 0.1);
+            color: yellow;
+        }
+
+        /* Preset buttons container */
+        #preset-buttons {
+            margin-top: 1em;
+            display: flex;
+            gap: 1em;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        @media (max-width: 480px) {
+            #timer-text {
+                width: 60%;
+                max-width: 140px;
+            }
+
+            #timer-text span {
+                font-size: clamp(1.4rem, 6vw, 2.8rem);
+            }
+        }
+
         @media (max-width: 360px) {
-            #timer-text { width: 70%; max-width: 120px; }
-            #timer-text span { font-size: clamp(1.2rem, 7vw, 2.2rem); }
+            #timer-text {
+                width: 70%;
+                max-width: 120px;
+            }
+
+            #timer-text span {
+                font-size: clamp(1.2rem, 7vw, 2.2rem);
+            }
         }
     </style>
 </head>
+
 <body>
     <div id="timer-inputs" style="text-align: center;">
         <input type="number" id="input-hours" min="0" max="99" placeholder="HH" aria-label="Hours" />
@@ -88,6 +236,7 @@
         <input type="number" id="input-seconds" min="0" max="59" placeholder="SS" aria-label="Seconds" />
         <button id="set-timer-btn" aria-label="Set Timer">Set Timer</button>
     </div>
+
     <div id="preset-buttons">
         <button class="preset-btn" data-time="2280000">EDD Review (38 min)</button>
         <button class="preset-btn" data-time="460800">GC Consumer Review (7.68 min)</button>
@@ -97,17 +246,25 @@
         <button class="preset-btn" data-time="460800">KYC Appeals (7.68 min)</button>
         <button class="preset-btn" data-time="2144400">GC Refresh Backlog (35.74 min)</button>
     </div>
-    <div id="timer-container">
-        <svg viewBox="0 0 100 100" aria-hidden="true">
+
+    <div id="timer-container" aria-live="polite" aria-atomic="true">
+        <svg viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+            <defs>
+                <linearGradient id="timer-gradient" x1="1" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#facc15" />
+                    <stop offset="100%" stop-color="#fbbf24" />
+                </linearGradient>
+            </defs>
             <circle id="timer-bg" cx="50" cy="50" r="45" />
             <circle id="timer-elapsed" cx="50" cy="50" r="45" />
         </svg>
-        <div id="timer-text" aria-live="polite" aria-atomic="true">
+        <div id="timer-text">
             <span id="hours">00</span>
             <span id="minutes">00</span>
             <span id="seconds">00</span>
         </div>
     </div>
+
     <div id="controls">
         <button id="startBtn">Start</button>
         <button id="pauseBtn" disabled>Pause</button>
@@ -116,14 +273,10 @@
 
     <!-- Alert sound -->
     <audio id="alert-sound" src="alert.wav" preload="auto"></audio>
+    <!-- Halfway sound -->
+    <audio id="halfway-sound" src="timer.wav" preload="auto"></audio>
 
     <script>
-        // Set background image explicitly on page load
-        document.body.style.backgroundImage = "url('time.jpg')";
-        document.body.style.backgroundSize = "cover";
-        document.body.style.backgroundPosition = "center";
-        document.body.style.backgroundRepeat = "no-repeat";
-
         const timerElapsed = document.getElementById('timer-elapsed');
         const timerContainer = document.getElementById('timer-container');
         const startBtn = document.getElementById('startBtn');
@@ -132,6 +285,9 @@
 
         const alertSound = document.getElementById('alert-sound');
         let alertPlayed = false;
+
+        const halfwaySound = document.getElementById('halfway-sound');
+        let halfwayPlayed = false;
 
         const hoursElem = document.getElementById('hours');
         const minutesElem = document.getElementById('minutes');
@@ -150,9 +306,9 @@
         timerElapsed.style.strokeDasharray = CIRCUMFERENCE;
         timerElapsed.style.strokeDashoffset = CIRCUMFERENCE; // start fully hidden
 
-        let timerStartTimestamp = null; // real start time (Date.now())
-        let pausedDuration = 0; // total paused time in ms
-        let pauseStartTimestamp = null; // when pause started
+        let timerStartTimestamp = null;
+        let pausedDuration = 0;
+        let pauseStartTimestamp = null;
         let animationFrameId = null;
         let state = 'stopped';
 
@@ -193,10 +349,20 @@
                 timerContainer.classList.remove('alert');
             }
 
+            // Play halfway sound once when crossing halfway point
+            const halfway = TOTAL_TIME_MS / 2;
+            if (remaining <= halfway && !halfwayPlayed && remaining > 0) {
+                halfwaySound.play().catch(() => { });
+                halfwayPlayed = true;
+            }
+            if (remaining > halfway) {
+                halfwayPlayed = false;
+            }
+
             // Play alert sound once when time runs out
             if (remaining <= 0) {
                 if (!alertPlayed) {
-                    alertSound.play().catch(e => { /* ignore play errors */ });
+                    alertSound.play().catch(() => { });
                     alertPlayed = true;
                 }
             } else {
@@ -384,4 +550,5 @@
         });
     </script>
 </body>
+
 </html>
