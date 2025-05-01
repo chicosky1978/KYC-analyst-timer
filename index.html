@@ -273,7 +273,7 @@
 
     <!-- Alert sound -->
     <audio id="alert-sound" src="alert.wav" preload="auto"></audio>
-    <!-- Halfway sound -->
+    <!-- Timer sound at 1/5 remaining -->
     <audio id="halfway-sound" src="timer.wav" preload="auto"></audio>
 
     <script>
@@ -349,13 +349,13 @@
                 timerContainer.classList.remove('alert');
             }
 
-            // Play halfway sound once when crossing halfway point
-            const halfway = TOTAL_TIME_MS / 2;
-            if (remaining <= halfway && !halfwayPlayed && remaining > 0) {
+            // Play timer.wav once when there is 1/5 time left
+            const oneFifth = TOTAL_TIME_MS / 5;
+            if (remaining <= oneFifth && !halfwayPlayed && remaining > 0) {
                 halfwaySound.play().catch(() => { });
                 halfwayPlayed = true;
             }
-            if (remaining > halfway) {
+            if (remaining > oneFifth) {
                 halfwayPlayed = false;
             }
 
