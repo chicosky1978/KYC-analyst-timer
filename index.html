@@ -510,7 +510,65 @@
                 pauseStartTimestamp = stateObj.pauseStartTimestamp || null;
                 state = stateObj.state || 'stopped';
 
-                const totalSeconds = Math.floor(TOTAL_TIME_MS / 1000);
+            const totalSeconds = Math.floor(TOTAL_TIME_MS / 1000);
+            const h = Math.floor(totalSeconds / 3600);
+            const m = Math.floor((totalSeconds % 3600) / 60);
+            const s = totalSeconds % 60;
+
+            inputHours.value = h > 0 ? h : '';
+            inputMinutes.value = m > 0 ? m : '';
+            inputSeconds.value = s > 0 ? s : '';
+
+            if (state === 'running') {
+                startTimer();
+            } else if (state === 'paused') {
+                updateTimer();
+                updateButtons();
+            } else {
+                resetTimer();
+            }
+        } catch (e) {
+            console.error('Failed to load timer state:', e);
+        }
+    }
+
+    setTimerBtn.addEventListener('click', () => {
+        const h = Math.max(0, Math.min(99, parseInt(inputHours.value) || 0));
+        const m = Math.max(0, Math.min(59, parseInt(inputMinutes.value) || 0));
+        const s = Math.max(0, Math.min(59, parseInt(inputSeconds.value) || 0));
+
+        TOTAL_TIME_MS = (h * 3600 + m * 60 + s) * 1000;
+
+        if (TOTAL_TIME_MS <= 0) {
+            alert('Please enter a valid time greater than 0.');
+            return;
+        }
+
+        resetTimer();
+        saveState();
+    });
+
+    startBtn.addEventListener('click', () => {
+        startTimer();
+    });
+
+    pauseBtn.addEventListener('click', () => {
+        pauseTimer();
+    });
+
+    resetBtn.addEventListener('click', () => {
+        resetTimer();
+    });
+
+    const presetButtons = document.querySelectorAll('.preset-btn');
+    presetButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const presetTime = parseInt(button.getAttribute('data-time'), 10);
+            if (presetTime > 0) {
+                TOTAL_TIME_MS = presetTime;
+                resetTimer();
+
+                const totalSeconds = presetTime / 1000;
                 const h = Math.floor(totalSeconds / 3600);
                 const m = Math.floor((totalSeconds % 3600) / 60);
                 const s = totalSeconds % 60;
@@ -519,80 +577,22 @@
                 inputMinutes.value = m > 0 ? m : '';
                 inputSeconds.value = s > 0 ? s : '';
 
-                if (state === 'running') {
-                    startTimer();
-                } else if (state === 'paused') {
-                    updateTimer();
-                    updateButtons();
-                } else {
-                    resetTimer();
-                }
-            } catch (e) {
-                console.error('Failed to load timer state:', e);
+                saveState();
             }
+        });
+    });
+
+    window.addEventListener('load', () => {
+        loadState();
+    });
+
+    window.addEventListener('beforeunload', function (e) {
+        if (state !== 'stopped') {
+            e.preventDefault();
+            e.returnValue = '';
+            return '';
         }
-
-        setTimerBtn.addEventListener('click', () => {
-            const h = Math.max(0, Math.min(99, parseInt(inputHours.value) || 0));
-            const m = Math.max(0, Math.min(59, parseInt(inputMinutes.value) || 0));
-            const s = Math.max(0, Math.min(59, parseInt(inputSeconds.value) || 0));
-
-            TOTAL_TIME_MS = (h * 3600 + m * 60 + s) * 1000;
-
-            if (TOTAL_TIME_MS <= 0) {
-                alert('Please enter a valid time greater than 0.');
-                return;
-            }
-
-            resetTimer();
-            saveState();
-        });
-
-        startBtn.addEventListener('click', () => {
-            startTimer();
-        });
-
-        pauseBtn.addEventListener('click', () => {
-            pauseTimer();
-        });
-
-        resetBtn.addEventListener('click', () => {
-            resetTimer();
-        });
-
-        const presetButtons = document.querySelectorAll('.preset-btn');
-        presetButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const presetTime = parseInt(button.getAttribute('data-time'), 10);
-                if (presetTime > 0) {
-                    TOTAL_TIME_MS = presetTime;
-                    resetTimer();
-
-                    const totalSeconds = presetTime / 1000;
-                    const h = Math.floor(totalSeconds / 3600);
-                    const m = Math.floor((totalSeconds % 3600) / 60);
-                    const s = totalSeconds % 60;
-
-                    inputHours.value = h > 0 ? h : '';
-                    inputMinutes.value = m > 0 ? m : '';
-                    inputSeconds.value = s > 0 ? s : '';
-
-                    saveState();
-                }
-            });
-        });
-
-        window.addEventListener('load', () => {
-            loadState();
-        });
-
-        window.addEventListener('beforeunload', function (e) {
-            if (state !== 'stopped') {
-                e.preventDefault();
-                e.returnValue = '';
-                return '';
-            }
-        });
+    });
     </script>
 </body>
 
